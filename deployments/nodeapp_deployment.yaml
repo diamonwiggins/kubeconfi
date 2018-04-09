@@ -1,0 +1,46 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: nodeapp
+  labels:
+    app: nodeapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nodeapp
+  template:
+    metadata:
+      labels:
+        app: nodeapp
+        version: v0.0.1
+    spec:
+      containers:
+      - name: nodeapp
+        image: diamonwiggins/nodeapp
+        ports:
+        - containerPort: 3000
+        env:
+          - name: FACEBOOK_CLIENTID
+            valueFrom:
+              secretKeyRef:
+                name: facebook-oauth
+                key: client_id
+          - name: FACEBOOK_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: facebook-oauth
+                key: secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeapp
+spec:
+  ports:
+  - name: http
+    targetPort: 3000
+    port: 3000
+  selector:
+    app: nodeapp

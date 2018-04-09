@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: heketi
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    ingress.kubernetes.io/whitelist-source-range: "128.82.4.0/24,128.82.9.0/24,10.0.0.0/8"
+spec:
+  rules:
+  - host: heketi.cs.odu.edu
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: heketi
+          servicePort: 8080

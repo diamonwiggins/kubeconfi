@@ -1,0 +1,42 @@
+---
+kind: Deployment
+apiVersion: extensions/v1beta1
+metadata:
+  name: mongod
+  labels:
+    app: mongod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongod
+  template:
+    metadata:
+      labels:
+        app: mongod
+        version: v0.0.1
+    spec:
+      volumes:
+        - name: mongod-storage
+          persistentVolumeClaim:
+            claimName: mongod-claim
+      containers:
+        - name: mongod
+          image: diamonwiggins/mongod
+          ports:
+          - containerPort: 27017
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: mongod-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongod
+spec:
+  ports:
+  - name: http
+    targetPort: 27017
+    port: 27017
+  selector:
+    app: mongod
